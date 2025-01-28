@@ -1,52 +1,7 @@
-# RESTful API Node Server Boilerplate
+# Zim Tourism RESTful API
 
-[![Build Status](https://travis-ci.org/hagopj13/node-express-boilerplate.svg?branch=master)](https://travis-ci.org/hagopj13/node-express-boilerplate)
-[![Coverage Status](https://coveralls.io/repos/github/hagopj13/node-express-boilerplate/badge.svg?branch=master)](https://coveralls.io/github/hagopj13/node-express-boilerplate?branch=master)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+Zim Tourism RESTful API using Node.js, Express, and Mongoose.
 
-A boilerplate/starter project for quickly building RESTful APIs using Node.js, Express, and Mongoose.
-
-By running a single command, you will get a production-ready Node.js app installed and fully configured on your machine. The app comes with many built-in features, such as authentication using JWT, request validation, unit and integration tests, continuous integration, docker support, API documentation, pagination, etc. For more details, check the features list below.
-
-## Quick Start
-
-To create a project, simply run:
-
-```bash
-npx create-nodejs-express-app <project-name>
-```
-
-Or
-
-```bash
-npm init nodejs-express-app <project-name>
-```
-
-## Manual Installation
-
-If you would still prefer to do the installation manually, follow these steps:
-
-Clone the repo:
-
-```bash
-git clone --depth 1 https://github.com/hagopj13/node-express-boilerplate.git
-cd node-express-boilerplate
-npx rimraf ./.git
-```
-
-Install the dependencies:
-
-```bash
-yarn install
-```
-
-Set the environment variables:
-
-```bash
-cp .env.example .env
-
-# open .env and modify the environment variables (if needed)
-```
 
 ## Table of Contents
 
@@ -153,7 +108,7 @@ The environment variables can be found and modified in the `.env` file. They com
 PORT=3000
 
 # URL of the Mongo DB
-MONGODB_URL=mongodb://127.0.0.1:27017/node-boilerplate
+MONGODB_URL=mongodb://127.0.0.1:27017/db-name
 
 # JWT
 # JWT secret key
@@ -429,11 +384,6 @@ To maintain a consistent coding style across different IDEs, the project contain
 
 Contributions are more than welcome! Please check out the [contributing guide](CONTRIBUTING.md).
 
-## Inspirations
-
-- [danielfsousa/express-rest-es2017-boilerplate](https://github.com/danielfsousa/express-rest-es2017-boilerplate)
-- [madhums/node-express-mongoose](https://github.com/madhums/node-express-mongoose)
-- [kunalkapadia/express-mongoose-es6-rest-api](https://github.com/kunalkapadia/express-mongoose-es6-rest-api)
 
 ## License
 
