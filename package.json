@@ -1,11 +1,11 @@
 {
-  "name": "create-nodejs-express-app",
-  "version": "1.7.0",
-  "description": "Create a Node.js app for building production-ready RESTful APIs using Express, by running one command",
+  "name": "zim-tourism-app",
+  "version": "1.0.0",
+  "description": "Zim Tourism app Restful API",
   "bin": "bin/createNodejsApp.js",
   "main": "src/index.js",
-  "repository": "https://github.com/hagopj13/node-express-boilerplate.git",
-  "author": "Hagop Jamkojian <hagopj13@gmail.com>",
+  "repository": "https://github.com/phil23-4/api-tourism.git",
+  "author": "Phillip Francis Chapita <francis@phillipchapita.com>",
   "license": "MIT",
   "engines": {
     "node": ">=12.0.0"
