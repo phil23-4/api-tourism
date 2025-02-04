@@ -66,7 +66,7 @@ module.exports = {
   },
   cloud: {
     name: envVars.CLOUD_NAME,
-    apiKey: envVars.CLOUD_API_KEY,
+    api_key: envVars.CLOUD_API_KEY,
     api_secret: envVars.CLOUD_API_SECRET,
     project: envVars.CLOUD_PROJECT,
   },
