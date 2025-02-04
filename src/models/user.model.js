@@ -35,6 +35,7 @@ const userSchema = mongoose.Schema(
       },
       private: true, // used by the toJSON plugin
     },
+    passwordChangedAt: Date,
     role: {
       type: String,
       enum: roles,
@@ -44,7 +45,7 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    profile: { type: mongoose.Schema.Types.ObjectId, ref: 'Profile' },
+    active: { type: Boolean, default: true, select: false },
   },
   {
     timestamps: true,
@@ -83,6 +84,32 @@ userSchema.pre('save', async function (next) {
   }
   next();
 });
+
+// Set passwordChangedAt field to the current time when the user change the password
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+// QUERY MIDDLEWARE:
+userSchema.pre(/^find/, function (next) {
+  //  this points to the current query
+  this.find({ active: { $ne: false } });
+
+  this.start = Date.now();
+  next();
+});
+
+// Check if user changed password after the token was issued
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+    return JWTTimestamp < changedTimestamp;
+  }
+  return false;
+};
 
 /**
  * @typedef User
