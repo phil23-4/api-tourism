@@ -47,6 +47,24 @@ const verifyEmail = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+/**
+ * @desc      Change Password Controller
+ * @param     { Object } req - Request object
+ * @param     { Object } res - Response object
+ * @property  { String } req.body.currentPassword - The user current password
+ * @property  { String } req.body.password - The new user password
+ * @property  { String } req.user.id - User ID
+ * @returns   { JSON } - A JSON object representing the type and message
+ */
+const changePassword = catchAsync(async (req, res) => {
+  const { currentPassword, password } = req.body;
+  // 1) Calling reset password service
+  await authService.passwordChange(currentPassword, password, req.user.id);
+
+  // 2) If everything is OK, send data
+  res.status(httpStatus.OK).json({ status: 'Ok', message: 'Password changed successfully' });
+});
+
 module.exports = {
   register,
   login,
@@ -54,6 +72,7 @@ module.exports = {
   refreshTokens,
   forgotPassword,
   resetPassword,
+  changePassword,
   sendVerificationEmail,
   verifyEmail,
 };

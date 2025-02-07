@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const tokenService = require('./token.service');
 const userService = require('./user.service');
-const Token = require('../models/token.model');
+const { Token, User } = require('../models/index');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
 
@@ -29,7 +29,7 @@ const logout = async (refreshToken) => {
   if (!refreshTokenDoc) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not found');
   }
-  await refreshTokenDoc.remove();
+  await refreshTokenDoc.deleteOne();
 };
 
 /**
@@ -72,6 +72,39 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
 };
 
 /**
+ * @desc    Change Password Service
+ * @param   { String } currentPassword - Current user password
+ * @param   { String } password - User's password
+ * @param   { String } userId - User ID
+ * @return  { Promise }
+ */
+const passwordChange = async (currentPassword, password, userId) => {
+  // 1) Check if password and passwordConfirmation are not the same
+  if (!password) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Please input your new Password!');
+  }
+  const user = await User.findById(userId).select('+password');
+  const isPasswordMatch = await user.isPasswordMatch(currentPassword);
+
+  // 2) Check if currentPassword isn't the same of user password
+  if (!isPasswordMatch) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Passwords do not match!');
+  }
+
+  // Check if new password is the same as current password
+  if (!(await user.isPasswordMatch(password))) {
+    // 3) Update user password
+    user.password = password;
+    await user.save();
+  } else {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Old Password and New Password Cannot be the same!');
+  }
+
+  // 4) If everything is OK, send data
+  return user;
+};
+
+/**
  * Verify email
  * @param {string} verifyEmailToken
  * @returns {Promise}
@@ -95,5 +128,6 @@ module.exports = {
   logout,
   refreshAuth,
   resetPassword,
+  passwordChange,
   verifyEmail,
 };
