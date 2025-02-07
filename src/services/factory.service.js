@@ -6,7 +6,6 @@ const ApiError = require('../utils/ApiError');
  * @param {Object} docBody
  * @returns {Promise<Model>}
  */
-
 const createOne = async (Model, docBody) => {
   const doc = await Model.create(docBody);
   return doc;
@@ -93,11 +92,14 @@ const updateDocById = async (Model, docId, updateBody) => {
 
   if (!doc) throw new ApiError(httpStatus.NOT_FOUND, `${Model.modelName} not found`);
 
+  if (updateBody.email && (await Model.isEmailTaken(updateBody.email, docId))) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+  }
+
   Object.assign(doc, updateBody);
   await doc.save();
   return doc;
 };
-
 /**
  * Delete document by id
  * @param {ObjectId} docId
@@ -107,7 +109,7 @@ const deleteDocById = async (Model, docId) => {
   const doc = await getDocById(Model, docId);
   if (!doc) throw new ApiError(httpStatus.NOT_FOUND, `${Model.modelName} not found`);
 
-  await doc.remove();
+  await doc.deleteOne();
   return doc;
 };
 
