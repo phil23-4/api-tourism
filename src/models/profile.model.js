@@ -1,21 +1,27 @@
 const mongoose = require('mongoose');
-const toJSON = require('./plugins');
 
-const profileSchema = new mongoose.Schema(
+const { Schema } = mongoose;
+const { toJSON, paginate } = require('./plugins');
+
+const profileSchema = Schema(
   {
     personal_info: {
-      firstName: { type: String, required: true },
-      lastName: { type: String, required: true },
-      age: { type: Number },
+      firstName: String,
+      lastName: String,
+      age: Number,
+    },
+    photo: {
+      type: String,
+      default: 'default.jpg',
     },
     contact_details: {
       phone: {
-        mobile: { type: String },
-        work: { type: String },
+        mobile: String,
+        work: String,
       },
       email: {
-        personal: { type: String },
-        work: { type: String },
+        personal: String,
+        work: String,
       },
       social_media: {
         x: String,
@@ -29,9 +35,8 @@ const profileSchema = new mongoose.Schema(
         },
       ],
     },
-    // preferences: {},
-    // metadata: {},
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    profile_status: { type: Boolean, default: true, select: false },
+    user: { type: mongoose.Schema.ObjectId, ref: 'User', required: [true, 'Profile must belong to a user.'] },
   },
   {
     timestamps: true,
@@ -40,7 +45,22 @@ const profileSchema = new mongoose.Schema(
 
 // add plugin that converts mongoose to json
 profileSchema.plugin(toJSON);
+profileSchema.plugin(paginate);
 
+// profileSchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: 'user',
+//     select: 'username',
+//   });
+//   next();
+// });
+// QUERY MIDDLEWARE:
+profileSchema.pre(/^find/, function (next) {
+  //  this points to the current query
+  this.find({ profile_status: { $ne: false } });
+  this.start = Date.now();
+  next();
+});
 /**
  * @typedef Profile
  */
