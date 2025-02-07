@@ -10,3 +10,6 @@ yarn-error.log
 
 # Code coverage
 coverage
+
+# public file uploads
+src/public/assets/*
