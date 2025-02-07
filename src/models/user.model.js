@@ -49,6 +49,8 @@ const userSchema = mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
 
@@ -56,6 +58,11 @@ const userSchema = mongoose.Schema(
 userSchema.plugin(toJSON);
 userSchema.plugin(paginate);
 
+userSchema.virtual('profile', {
+  ref: 'Profile',
+  foreignField: 'user',
+  localField: '_id',
+});
 /**
  * Check if email is taken
  * @param {string} email - The user's email

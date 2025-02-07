@@ -3,8 +3,16 @@ const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
 const userValidation = require('../../validations/user.validation');
 const userController = require('../../controllers/user.controller');
+const profileRoute = require('./profile.route');
 
 const router = express.Router();
+
+router.use('/profile', profileRoute);
+router.use('/:profileId/profile', profileRoute);
+router.get('/me', auth('manageUser'), validate(userValidation.getUser), userController.getUser);
+
+// Delete LoggedIn User Account Route
+router.post('/deactivate', auth('manageUser'), validate(userValidation.deleteUser), userController.deleteMyAccount);
 
 router
   .route('/')
