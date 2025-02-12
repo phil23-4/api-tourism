@@ -5,7 +5,7 @@ const ApiError = require('./ApiError');
 const storage = multer.memoryStorage();
 
 const limits = {
-  fileSize: 1024 * 1024,
+  fileSize: 5000 * 4000,
 };
 
 const fileFilter = (req, file, cb) => {

@@ -22,6 +22,26 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.resizeCoverPhoto = catchAsync(async (req, res, next) => {
+  if (!req.file) return next();
+
+  req.file.filename = `destination-${req.params.destinationId}-${Date.now()}.jpeg`;
+
+  await sharp(req.file.buffer)
+    .resize({
+      width: 2000,
+      height: 1333,
+      kernel: sharp.kernel.nearest,
+      fit: sharp.fit.cover,
+      position: sharp.strategy.entropy,
+    })
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`src/public/assets/img/destinations/${req.file.filename}`);
+
+  next();
+});
+
 exports.resizeTourImages = catchAsync(async (req, res, next) => {
   if (!req.files.mainImage || !req.files.images) return next();
 
