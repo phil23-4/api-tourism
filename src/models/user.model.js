@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+
+const { Schema } = mongoose;
 const { toJSON, paginate } = require('./plugins');
 const { roles } = require('../config/roles');
 
-const userSchema = mongoose.Schema(
+const userSchema = Schema(
   {
     username: {
       type: String,
