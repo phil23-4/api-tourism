@@ -9,6 +9,8 @@ const createProfile = {
       age: Joi.number(),
     },
     photo: Joi.string(),
+    photoId: Joi.string(),
+    photoUrl: Joi.string(),
     contact_details: {
       phone: {
         mobile: Joi.string(),
@@ -44,6 +46,8 @@ const updateProfile = {
       age: Joi.number(),
     },
     photo: Joi.string(),
+    photoId: Joi.string(),
+    photoUrl: Joi.string(),
     contact_details: {
       phone: {
         mobile: Joi.string(),
