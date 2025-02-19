@@ -1,20 +1,52 @@
 // Packages
 const multer = require('multer');
+const httpStatus = require('http-status');
 const ApiError = require('./ApiError');
+const { storage } = require('../config/cloudinary.config');
 
-const storage = multer.memoryStorage();
-
-const limits = {
-  fileSize: 5000 * 4000,
+// Default configuration
+const uploadConfig = {
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+    files: 4, // Maximum 4 files (1 main + 3 array images)
+  },
+  allowedMimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
 };
 
+// Centralized error handler
+const handleMulterError = (err, res) => {
+  const errorMap = {
+    LIMIT_FILE_SIZE: {
+      status: 413,
+      message: `File too large. Maximum size is ${uploadConfig.limits.fileSize / 1024 / 1024}MB`,
+    },
+    LIMIT_FILE_TYPE: {
+      status: httpStatus.UNSUPPORTED_MEDIA_TYPE,
+      message: `Invalid file type. Allowed types: ${uploadConfig.allowedMimeTypes.join(', ')}`,
+    },
+    LIMIT_FILE_COUNT: {
+      status: 413,
+      message: `Maximum ${uploadConfig.limits.files} files allowed`,
+    },
+  };
+
+  const error = errorMap[err.code] || {
+    status: httpStatus.BAD_REQUEST,
+    message: 'File upload error',
+  };
+
+  res.status(error.status).json({ error: error.message });
+};
+// File filter
+// File validation middleware
 const fileFilter = (req, file, cb) => {
-  // if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|WEBP|webp)$/)) {
-  if (!file.mimetype.startsWith('image/')) {
-    req.fileValidationError = 'Only image files are allowed!';
-    return cb(new ApiError('Not an image! Please upload only images', 400), false);
+  const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+  if (allowedMimeTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new multer.MulterError('LIMIT_FILE_TYPE'), false);
   }
-  cb(null, true);
 };
 
 /**
@@ -24,18 +56,16 @@ const fileFilter = (req, file, cb) => {
 exports.singleFile = (name) => (req, res, next) => {
   const upload = multer({
     storage,
-    limits,
+    limits: { fileSize: uploadConfig.limits.fileSize },
     fileFilter,
   }).single(name);
 
   upload(req, res, (err) => {
     if (err instanceof multer.MulterError) {
-      if (err.code === 'LIMIT_UNEXPECTED_FILE') {
-        return next(new ApiError(`Cannot Upload More Than 1 Image`, 500));
-      }
+      return handleMulterError(err, res);
     }
 
-    if (err) return next(new ApiError(err, 500));
+    if (err) return next(new ApiError(err.message, httpStatus.INTERNAL_SERVER_ERROR));
     next();
   });
 };
@@ -46,16 +76,16 @@ exports.singleFile = (name) => (req, res, next) => {
 exports.anyMulter = () => (req, res, next) => {
   const upload = multer({
     storage,
-    limits,
+    limits: { fileSize: uploadConfig.limits.fileSize },
     fileFilter,
   }).any();
 
   upload(req, res, (err) => {
     if (err instanceof multer.MulterError) {
-      return next(new ApiError(`A Multer error occurred when uploading`, 500));
+      return handleMulterError(err, res);
     }
     // An unknown error occurred when uploading.
-    if (err) return next(new ApiError(err, 500));
+    if (err) return next(new ApiError(err.message, httpStatus.INTERNAL_SERVER_ERROR));
     next();
   });
 };
@@ -65,7 +95,10 @@ exports.anyMulter = () => (req, res, next) => {
 exports.multipleFiles = () => (req, res, next) => {
   const upload = multer({
     storage,
-    limits,
+    limits: {
+      fileSize: uploadConfig.limits.fileSize,
+      files: uploadConfig.limits.files,
+    },
     fileFilter,
   }).fields([
     { name: 'mainImage', maxCount: 1 },
@@ -74,10 +107,10 @@ exports.multipleFiles = () => (req, res, next) => {
 
   upload(req, res, (err) => {
     if (err instanceof multer.MulterError) {
-      return next(new ApiError(`A Multer error occurred when uploading`, 500));
+      return handleMulterError(err, res);
     }
     // An unknown error occurred when uploading.
-    if (err) return next(new ApiError(err, 500));
+    if (err) return next(new ApiError(err.message, httpStatus.INTERNAL_SERVER_ERROR));
     next();
   });
 };
