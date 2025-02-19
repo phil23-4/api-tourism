@@ -14,6 +14,8 @@ const profileSchema = Schema(
       type: String,
       default: 'default.jpg',
     },
+    photoId: String,
+    photoUrl: String,
     contact_details: {
       phone: {
         mobile: String,
