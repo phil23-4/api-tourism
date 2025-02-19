@@ -11,11 +11,9 @@ const profileSchema = Schema(
       age: Number,
     },
     photo: {
-      type: String,
-      default: 'default.jpg',
+      url: String,
+      publicId: String,
     },
-    photoId: String,
-    photoUrl: String,
     contact_details: {
       phone: {
         mobile: String,

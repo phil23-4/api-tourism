@@ -56,17 +56,13 @@ const getProfile = catchAsync(async (req, res) => {
 
 const updateProfile = catchAsync(async (req, res) => {
   if (!req.body.user) req.body.user = req.user.id;
-  if (req.file) req.body.photo = req.file.filename;
-  if (!req.body.photoUrl) req.body.photoUrl = req.file.path;
-  if (!req.body.photoId) req.body.photoId = req.file.filename;
-  const updateData = pick(req.body, [
-    'personal_info.firstName',
-    'personal_info.lastName',
-    'personal_info.age',
-    'photo',
-    'photoUrl',
-    'photoId',
-  ]);
+  if (req.file) {
+    req.body.photo = {
+      url: req.file.path,
+      publicId: req.file.filename,
+    };
+  }
+  const updateData = pick(req.body, ['personal_info.firstName', 'personal_info.lastName', 'personal_info.age', 'photo']);
 
   const profile = await factoryService.updateDoc(Profile, req.params.profileId, updateData);
   res.status(httpStatus.OK).json({ status: 'success', data: profile });
