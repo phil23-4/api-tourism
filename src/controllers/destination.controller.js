@@ -33,6 +33,9 @@ const getDestinations = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const destinations = await factoryService.queryAll(Destination, filter, options);
+  if (destinations.results.length === 0) {
+    res.status(httpStatus.OK).json('Destinations list is empty');
+  }
   res.status(httpStatus.OK).json(destinations);
 });
 
