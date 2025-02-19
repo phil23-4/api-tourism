@@ -101,6 +101,21 @@ const updateDocById = async (Model, docId, updateBody) => {
   return doc;
 };
 /**
+ * Update document by id
+ * @param {ObjectId} id
+ * @param {Object} popOptions - Populate options
+ * @returns {Promise <QueryResult>}
+ */
+const updateDoc = async (Model, docId, updateBody) => {
+  const doc = await Model.findByIdAndUpdate(docId, { $set: updateBody }, { new: true, runValidators: true }).select('-__v');
+
+  if (!doc) throw new ApiError(httpStatus.NOT_FOUND, `${Model.modelName} not found`);
+  if (updateBody.email && (await Model.isEmailTaken(updateBody.email, docId))) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+  }
+  return doc;
+};
+/**
  * Delete document by id
  * @param {ObjectId} docId
  * @returns {Promise<Model> }
@@ -121,5 +136,6 @@ module.exports = {
   getDocBySlug,
   getDocByEmail,
   updateDocById,
+  updateDoc,
   deleteDocById,
 };
