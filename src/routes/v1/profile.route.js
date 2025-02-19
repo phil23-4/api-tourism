@@ -4,7 +4,8 @@ const validate = require('../../middlewares/validate');
 const auth = require('../../middlewares/auth');
 const profileValidation = require('../../validations/profile.validation');
 const { singleFile } = require('../../utils/multer');
-const sharp = require('../../utils/sharp');
+// const upload = require('../../config/cloudinary.config');
+// const sharp = require('../../utils/sharp');
 
 const router = express.Router({ mergeParams: true });
 
@@ -15,14 +16,15 @@ router
     auth('manageUser'),
     validate(profileValidation.createProfile),
     singleFile('photo'),
-    sharp.resizeUserPhoto,
+    // sharp.resizeUserPhoto,
     profileController.createProfile
   )
   .patch(
     auth('manageUser'),
     validate(profileValidation.updateProfile),
     singleFile('photo'),
-    sharp.resizeUserPhoto,
+    // upload.single('photo'),
+    // sharp.resizeUserPhoto,
     profileController.updateProfile
   )
   .delete(auth('manageUser'), validate(profileValidation.deleteProfile), profileController.deleteProfile);
