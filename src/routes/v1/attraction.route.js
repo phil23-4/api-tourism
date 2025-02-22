@@ -33,7 +33,10 @@ router
   .post(
     auth('manageAttractions'),
     validate(attractionValidation.createAttraction),
-    multipleFiles(),
+    multipleFiles('tourism/attractions', [
+      { name: 'mainImage', maxCount: 1 },
+      { name: 'images', maxCount: 3 },
+    ]),
     // sharp.resizeAttractionImages,
     createAttraction
   )
@@ -45,7 +48,10 @@ router
   .patch(
     auth('manageAttractions'),
     validate(attractionValidation.updateAttraction),
-    multipleFiles(),
+    multipleFiles('tourism/attractions', [
+      { name: 'mainImage', maxCount: 1 },
+      { name: 'images', maxCount: 3 },
+    ]),
     // sharp.resizeAttractionImages,
     updateAttraction
   )

@@ -1,4 +1,5 @@
 // Packages
+const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 const httpStatus = require('http-status');
 const ApiError = require('./ApiError');
@@ -28,6 +29,14 @@ const handleMulterError = (err, res) => {
       status: 413,
       message: `Maximum ${uploadConfig.limits.files} files allowed`,
     },
+    ECONNRESET: {
+      status: 499,
+      message: 'Connection closed by client',
+    },
+    ETIMEDOUT: {
+      status: 504,
+      message: 'Connection timed out',
+    },
   };
 
   const error = errorMap[err.code] || {
@@ -38,7 +47,6 @@ const handleMulterError = (err, res) => {
   res.status(error.status).json({ error: error.message });
 };
 // File filter
-// File validation middleware
 const fileFilter = (req, file, cb) => {
   const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
@@ -53,9 +61,9 @@ const fileFilter = (req, file, cb) => {
  * Upload single image
  * @param {String} name
  */
-exports.singleFile = (name) => (req, res, next) => {
+exports.singleFile = (folder, name) => (req, res, next) => {
   const upload = multer({
-    storage,
+    storage: storage(folder),
     limits: { fileSize: uploadConfig.limits.fileSize },
     fileFilter,
   }).single(name);
@@ -64,8 +72,8 @@ exports.singleFile = (name) => (req, res, next) => {
     if (err instanceof multer.MulterError) {
       return handleMulterError(err, res);
     }
-
     if (err) return next(new ApiError(err.message, httpStatus.INTERNAL_SERVER_ERROR));
+
     next();
   });
 };
@@ -92,18 +100,15 @@ exports.anyMulter = () => (req, res, next) => {
 /**
  * Accept a mix of files, specified by fields. An object with arrays of files will be stored in req.files.
  */
-exports.multipleFiles = () => (req, res, next) => {
+exports.multipleFiles = (folder, fields) => (req, res, next) => {
   const upload = multer({
-    storage,
+    storage: storage(folder),
     limits: {
       fileSize: uploadConfig.limits.fileSize,
       files: uploadConfig.limits.files,
     },
     fileFilter,
-  }).fields([
-    { name: 'mainImage', maxCount: 1 },
-    { name: 'images', maxCount: 3 },
-  ]);
+  }).fields(fields);
 
   upload(req, res, (err) => {
     if (err instanceof multer.MulterError) {
@@ -114,3 +119,5 @@ exports.multipleFiles = () => (req, res, next) => {
     next();
   });
 };
+
+exports.destroyFile = (PublicID) => cloudinary.v2.uploader.destroy(PublicID, (err, des) => des);

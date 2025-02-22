@@ -10,16 +10,21 @@ cloudinary.config({
   api_secret: config.cloud.api_secret,
 });
 
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: (req) => `${config.cloud.project}/${req.originalUrl.split('/').pop()}`,
-    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
-  },
-  // params: { resource_type: 'raw' }, => this is in case you want to upload other type of files, not just images
-  filename(req, res, cb) {
-    cb(null, res.originalname); // The file on cloudinary would have the same name as the original file name
-  },
-});
+// Dynamic storage configuration with transformations
+const storage = (folder) =>
+  new CloudinaryStorage({
+    cloudinary,
+    params: (req) => ({
+      folder,
+      allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+      transformation: req.body.transformations || [],
+      resource_type: 'auto',
+      quality: 'auto',
+    }),
+    // params: { resource_type: 'raw' }, => this is in case you want to upload other type of files, not just images
+    filename(req, res, cb) {
+      cb(null, res.originalname); // The file on cloudinary would have the same name as the original file name
+    },
+  });
 
 module.exports = { storage };
