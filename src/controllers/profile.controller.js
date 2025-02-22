@@ -1,6 +1,5 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
-const pick = require('../utils/pick');
 const catchAsync = require('../utils/catchAsync');
 const { Profile } = require('../models');
 const { factoryService } = require('../services');
@@ -14,8 +13,12 @@ const { factoryService } = require('../services');
  */
 const createProfile = catchAsync(async (req, res) => {
   if (!req.body.user) req.body.user = req.user.id;
-  if (req.file) req.body.photo = req.file.filename;
-  if (req.body.photoUrl) req.body.photoUrl = req.file.path;
+  if (req.file) {
+    req.body.photo = {
+      url: req.file.path,
+      publicId: req.file.filename,
+    };
+  }
   const user = req.user.id;
   const checkUser = await Profile.find({ user });
   // 1) Check if the user has already created a profile
@@ -62,9 +65,9 @@ const updateProfile = catchAsync(async (req, res) => {
       publicId: req.file.filename,
     };
   }
-  const updateData = pick(req.body, ['personal_info.firstName', 'personal_info.lastName', 'personal_info.age', 'photo']);
+  // const updateData = pick(req.body, ['personal_info.firstName', 'personal_info.lastName', 'personal_info.age', 'photo']);
 
-  const profile = await factoryService.updateDoc(Profile, req.params.profileId, updateData);
+  const profile = await factoryService.updateDoc(Profile, req.params.profileId, req.body);
   res.status(httpStatus.OK).json({ status: 'success', data: profile });
 });
 
