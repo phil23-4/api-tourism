@@ -25,7 +25,27 @@ const aliasTopAttractions = (req, res, next) => {
  * @returns   { JSON } - A JSON object representing the status and attraction
  */
 const createAttraction = catchAsync(async (req, res) => {
-  if (req.file) req.body.mainImage = req.file.filename;
+  if (req.file) {
+    req.body.mainImage = {
+      url: req.file.path,
+      publicId: req.file.filename,
+    };
+  }
+  // Process main image
+  if (req.files.mainImage) {
+    req.body.mainImage = {
+      url: req.files.mainImage[0].path,
+      publicId: req.files.mainImage[0].filename,
+    };
+  }
+
+  // Process multiple images
+  if (req.files.images) {
+    req.body.images = req.files.images.map((file) => ({
+      url: file.path,
+      publicId: file.filename,
+    }));
+  }
   const attraction = await factoryService.createOne(Attraction, req.body);
   res.status(httpStatus.CREATED).json({ status: 'success', attraction });
 });
@@ -49,10 +69,9 @@ const getAttractions = catchAsync(async (req, res) => {
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const attractions = await factoryService.queryAll(Attraction, filter, options);
   if (attractions.results.length === 0) {
-    res.status(httpStatus.OK).json({ status: 'success', data: 'Attractions list is empty' });
-  } else {
-    res.status(httpStatus.OK).json({ status: 'success', attractions });
+    return res.status(httpStatus.OK).json({ status: 'success', data: 'Attractions list is empty' });
   }
+  res.status(httpStatus.OK).json({ status: 'success', attractions });
 });
 
 /**
@@ -113,7 +132,7 @@ const updateAttraction = catchAsync(async (req, res) => {
       publicId: file.filename,
     }));
   }
-  const attraction = await factoryService.updateDoc(Attraction, req.params.attractionId, req.body);
+  const attraction = await factoryService.updateDocById(Attraction, req.params.attractionId, req.body);
   if (!attraction) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Attraction not found');
   }
