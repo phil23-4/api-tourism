@@ -116,7 +116,6 @@ attractionSchema.virtual('tours', {
 
 // DOCUMENT MIDDLEWARE: runs before .save() and .create() !.update()
 attractionSchema.pre('save', function (next) {
-  if (!this.isModified('attractionName')) return next();
   this.slug = slugify(this.attractionName, { lower: true });
   next();
 });
@@ -129,7 +128,6 @@ attractionSchema.pre(/^find/, function (next) {
   });
   next();
 });
-
 /**
  * @typedef Attraction
  */
