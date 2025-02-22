@@ -66,7 +66,12 @@ const getDestination = catchAsync(async (req, res) => {
  * @returns   { JSON } - A JSON object representing the status and the destination
  */
 const updateDestination = catchAsync(async (req, res) => {
-  if (req.file) req.body.cover = req.file.filename;
+  if (req.file) {
+    req.body.cover = {
+      url: req.file.path,
+      publicId: req.file.filename,
+    };
+  }
   const destination = await factoryService.updateDocById(Destination, req.params.destinationId, req.body);
   res.status(httpStatus.OK).json({ status: 'success', destination });
 });

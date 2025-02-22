@@ -67,7 +67,7 @@ const updateProfile = catchAsync(async (req, res) => {
   }
   // const updateData = pick(req.body, ['personal_info.firstName', 'personal_info.lastName', 'personal_info.age', 'photo']);
 
-  const profile = await factoryService.updateDoc(Profile, req.params.profileId, req.body);
+  const profile = await factoryService.updateDocById(Profile, req.params.profileId, req.body);
   res.status(httpStatus.OK).json({ status: 'success', data: profile });
 });
 
