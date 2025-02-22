@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 const mongoose = require('mongoose');
-const Tour = require('./tour.model');
 
 const { Schema } = mongoose;
 // Plugins
@@ -21,15 +20,22 @@ const reviewSchema = Schema(
     tour: {
       type: mongoose.Types.ObjectId,
       ref: 'Tour',
-      required: [true, 'Review must belong to a Tour'],
-    },
-    user: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'User',
-        required: [true, 'Review must belong to a user.'],
+      required: () => {
+        return !this.attraction;
       },
-    ],
+    },
+    attraction: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Attraction',
+      required: () => {
+        return !this.tour;
+      },
+    },
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [true, 'Review must belong to a user.'],
+    },
   },
   {
     timestamps: true,
@@ -42,16 +48,19 @@ const reviewSchema = Schema(
 reviewSchema.plugin(toJSON);
 reviewSchema.plugin(paginate);
 
-reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+reviewSchema.index({ tour: 1, attraction: 1, user: 1 }, { unique: true });
 
-reviewSchema.statics.calcAverageRatings = async function (tourId) {
+reviewSchema.statics.calcAverageRatings = async function (tourId, attractionId) {
+  const model = tourId ? 'Tour' : 'Attraction';
+  const id = tourId || attractionId;
+
   const stats = await this.aggregate([
     {
-      $match: { tour: tourId },
+      $match: { [tourId ? 'tour' : 'attraction']: id },
     },
     {
       $group: {
-        _id: '$tour',
+        _id: null,
         nRating: { $sum: 1 },
         avgRating: { $avg: '$rating' },
       },
@@ -60,12 +69,12 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
   // console.log(stats);
 
   if (stats.length > 0) {
-    await Tour.findByIdAndUpdate(tourId, {
+    await model.findByIdAndUpdate(id, {
       ratingsQuantity: stats[0].nRating,
       ratingsAverage: stats[0].avgRating,
     });
   } else {
-    await Tour.findByIdAndUpdate(tourId, {
+    await model.findByIdAndUpdate(id, {
       ratingsQuantity: 0,
       ratingsAverage: 4.5,
     });
@@ -86,12 +95,12 @@ reviewSchema.pre(/^find/, function (next) {
 
 reviewSchema.post('save', function () {
   // this points to current review
-  this.constructor.calcAverageRatings(this.attraction);
+  this.constructor.calcAverageRatings(this.tour, this.attraction);
 });
 
 reviewSchema.post(/^findByIdAnd/, async function () {
   // await this.findOne(); does NOT work here, query has already executed
-  await this.rev.constructor.calcAverageRatings(this.rev.attraction);
+  await this.rev.constructor.calcAverageRatings(this.rev.tour, this.rev.attraction);
 });
 
 /**
