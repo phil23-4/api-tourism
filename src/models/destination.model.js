@@ -9,12 +9,12 @@ const destinationSchema = Schema(
     name: {
       type: String,
       required: [true, 'A destination must have a name'],
+      trim: true,
       unique: true,
     },
     cover: {
-      type: String,
-      default: 'cover.jpg',
-      required: [true, 'A Destination must have a image cover'],
+      url: String,
+      publicId: String,
     },
     slug: String,
     summary: {
