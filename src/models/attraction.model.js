@@ -59,10 +59,12 @@ const attractionSchema = Schema(
           enum: ['Point'],
         },
         coordinates: [Number],
-        images: {
-          type: [String],
-          default: 'default.jpg',
-        },
+        images: [
+          {
+            url: String,
+            publicId: String,
+          },
+        ],
         description: String,
       },
     ],
@@ -83,10 +85,6 @@ const attractionSchema = Schema(
       type: Number,
       default: 0,
     },
-    review: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'Review',
-    },
   },
   {
     timestamps: true,
@@ -104,11 +102,11 @@ attractionSchema.index({ slug: 1 });
 attractionSchema.index({ attractionLocation: '2dsphere' });
 
 // Virtual populate
-// attractionSchema.virtual('reviews', {
-//   ref: 'Review',
-//   foreignField: 'attraction',
-//   localField: '_id',
-// });
+attractionSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'attraction',
+  localField: '_id',
+});
 
 attractionSchema.virtual('tours', {
   ref: 'Tour',
@@ -118,21 +116,16 @@ attractionSchema.virtual('tours', {
 
 // DOCUMENT MIDDLEWARE: runs before .save() and .create() !.update()
 attractionSchema.pre('save', function (next) {
+  if (!this.isModified('attractionName')) return next();
   this.slug = slugify(this.attractionName, { lower: true });
   next();
 });
 
 // QUERY MIDDLEWARE:
-// attractionSchema.pre(/^find/, function (next) {
-//   this.populate({
-//     path: 'destination',
-//     select: 'name',
-//   });
-//   next();
-// });
 attractionSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'review',
+    path: 'destination',
+    select: 'name',
   });
   next();
 });
