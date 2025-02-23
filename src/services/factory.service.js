@@ -55,10 +55,10 @@ const getDocById = async (Model, id, popOptions) => {
 const getOne = async (Model, param) => {
   // let { query } = param === 'req.params.attractionId' ? Model.findById(param) : Model.findOne({ param });
 
-  const doc = await getDocById(Model, param);
+  const doc = await Model.findOne(param);
   // const doc = await query;
 
-  if (!doc) throw new ApiError(httpStatus.NOT_FOUND, `Document with ID: ${param} not found`);
+  if (!doc) throw new ApiError(httpStatus.NOT_FOUND, `${Model.modelName} with param: ${param} not found`);
 
   // if (popOptions) query = query.populate(popOptions);
   return doc;
