@@ -204,7 +204,7 @@ const deleteAttraction = catchAsync(async (req, res) => {
  */
 const getAttractionsWithin = catchAsync(async (req, res) => {
   const attraction = await distanceService.getPlacesWithin(Attraction, req.params);
-  res.status(httpStatus.OK).json({ status: 'success', results: Attraction.length, attraction });
+  res.status(httpStatus.OK).json({ status: 'success', results: attraction.length, attraction });
 });
 
 /**
