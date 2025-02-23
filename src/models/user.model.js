@@ -48,6 +48,10 @@ const userSchema = Schema(
       default: false,
     },
     active: { type: Boolean, default: true, select: false },
+    profile: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Profile',
+    },
   },
   {
     timestamps: true,
@@ -60,11 +64,6 @@ const userSchema = Schema(
 userSchema.plugin(toJSON);
 userSchema.plugin(paginate);
 
-userSchema.virtual('profile', {
-  ref: 'Profile',
-  foreignField: 'user',
-  localField: '_id',
-});
 /**
  * Check if email is taken
  * @param {string} email - The user's email
@@ -111,7 +110,11 @@ userSchema.pre(/^find/, function (next) {
   next();
 });
 
-// Check if user changed password after the token was issued
+userSchema.pre(/^find/, function (next) {
+  this.populate({ path: 'profile', select: 'personal_info.firstName photo.url' });
+  next();
+});
+// // Check if user changed password after the token was issued
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
