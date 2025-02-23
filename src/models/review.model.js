@@ -91,7 +91,7 @@ reviewSchema.pre(/^findByIdAnd/, async function (next) {
 });
 
 reviewSchema.pre(/^find/, function (next) {
-  this.populate({ path: 'user', select: 'username' });
+  this.populate({ path: 'user', select: 'username profile' });
   next();
 });
 
