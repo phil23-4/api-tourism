@@ -3,9 +3,13 @@ const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
 const { attractionValidation } = require('../../validations');
 const { attractionController } = require('../../controllers');
+const reviewRoute = require('./review.route');
 const { multipleFiles } = require('../../utils/multer');
 
 const router = express.Router();
+
+router.use('/review', reviewRoute);
+router.use('/:attractionId/review', reviewRoute);
 
 const {
   aliasTopAttractions,

@@ -1,5 +1,7 @@
 /* eslint-disable prettier/prettier */
 const mongoose = require('mongoose');
+const Tour = require('./tour.model');
+const Attraction = require('./attraction.model');
 
 const { Schema } = mongoose;
 // Plugins
@@ -20,21 +22,21 @@ const reviewSchema = Schema(
     tour: {
       type: mongoose.Types.ObjectId,
       ref: 'Tour',
-      required: () => {
-        return !this.attraction;
-      },
+      // required: true,
     },
     attraction: {
       type: mongoose.Schema.ObjectId,
       ref: 'Attraction',
-      required: () => {
-        return !this.tour;
-      },
+      // required: true,
     },
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
       required: [true, 'Review must belong to a user.'],
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
     },
   },
   {
@@ -51,7 +53,7 @@ reviewSchema.plugin(paginate);
 reviewSchema.index({ tour: 1, attraction: 1, user: 1 }, { unique: true });
 
 reviewSchema.statics.calcAverageRatings = async function (tourId, attractionId) {
-  const model = tourId ? 'Tour' : 'Attraction';
+  const model = tourId ? Tour : Attraction;
   const id = tourId || attractionId;
 
   const stats = await this.aggregate([
@@ -89,7 +91,7 @@ reviewSchema.pre(/^findByIdAnd/, async function (next) {
 });
 
 reviewSchema.pre(/^find/, function (next) {
-  this.populate({ path: 'user', select: 'fullName photo' });
+  this.populate({ path: 'user', select: 'username' });
   next();
 });
 
