@@ -32,7 +32,7 @@ const createReview = catchAsync(async (req, res) => {
   const user = req.user.id;
   const checkUser = await Review.find({ user, attraction: req.body.attraction });
   // 1) Check if the user has already created a review
-  if (checkUser.length !== 0) throw new ApiError(httpStatus.FORBIDDEN, `Review already exists! Use update instead.`);
+  if (checkUser.length !== 0) throw new ApiError(httpStatus.FORBIDDEN, `User review already exists! Use update instead.`);
   const newReview = await factoryService.createOne(Review, req.body);
   res.status(httpStatus.CREATED).json({ status: 'success', newReview });
   //   console.log(req.body);
