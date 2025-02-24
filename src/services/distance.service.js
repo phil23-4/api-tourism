@@ -18,7 +18,7 @@ const getPlacesWithin = async (Model, destinationParams) => {
   const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
 
   const places = await Model.find({
-    destinationLocation: { $geoWithin: { $centerSphere: [[lat, lng], radius] } },
+    location: { $geoWithin: { $centerSphere: [[lat, lng], radius] } },
   });
   return places;
 };
