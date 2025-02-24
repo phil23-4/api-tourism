@@ -13,7 +13,12 @@ const { factoryService, distanceService } = require('../services');
  * @returns   { JSON } - A JSON object representing the status and destination
  */
 const createDestination = catchAsync(async (req, res) => {
-  if (req.file) req.body.cover = req.file.filename;
+  if (req.file) {
+    req.body.cover = {
+      url: req.file.path,
+      publicId: req.file.filename,
+    };
+  }
   const destination = await factoryService.createOne(Destination, req.body);
   res.status(httpStatus.CREATED).send(destination);
 });
