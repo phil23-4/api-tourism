@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { User } = require('../models');
+const { User, Profile } = require('../models');
 const { userService, factoryService } = require('../services');
 
 /**
@@ -75,7 +75,12 @@ const updateUser = catchAsync(async (req, res) => {
  * @returns   { JSON } - An empty JSON object
  */
 const deleteUser = catchAsync(async (req, res) => {
+  const user = await factoryService.getDocById(User, req.user.id);
+  // Delete user
   await userService.deleteUserById(req.params.userId);
+  // Delete associated profile
+  await factoryService.deleteDocById(Profile, user.profile);
+
   res.status(httpStatus.NO_CONTENT).send();
 });
 
@@ -92,6 +97,7 @@ const deleteMyAccount = catchAsync(async (req, res) => {
   if (!user.active === true) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Account does not exist');
   }
+  await factoryService.updateDoc(Profile, user.profile, { profile_status: 'false' });
   res.status(httpStatus.NO_CONTENT).send();
 });
 
