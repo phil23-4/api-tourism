@@ -146,7 +146,6 @@ const updateDoc = async (Model, docId, updateBody) => {
  */
 const deleteDocById = async (Model, docId) => {
   const doc = await getDocById(Model, docId);
-  if (!doc) throw new ApiError(httpStatus.NOT_FOUND, `${Model.modelName} not found`);
 
   await doc.deleteOne();
   return doc;
