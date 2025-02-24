@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { User, Profile } = require('../models');
-const { factoryService } = require('../services');
+const { factoryService, profileService } = require('../services');
 
 /**
  * @desc      Create New User Profile
@@ -19,11 +19,8 @@ const createProfile = catchAsync(async (req, res) => {
       publicId: req.file.filename,
     };
   }
-  const user = req.user.id;
-  const checkUserProfile = await factoryService.getOne(Profile, { user });
-  // 1) Check if the user has already created a profile
-  if (checkUserProfile.length !== 0) throw new ApiError(httpStatus.FORBIDDEN, `Profile already exists! Use update instead.`);
-  const newProfile = await factoryService.createOne(Profile, req.body);
+
+  const newProfile = await profileService.createProfile(req.body);
   // Link profile to user
   await factoryService.updateDocById(User, req.user.id, { profile: newProfile._id });
   res.status(httpStatus.CREATED).json({ status: 'success', newProfile });
@@ -60,9 +57,9 @@ const updateProfile = catchAsync(async (req, res) => {
       publicId: req.file.filename,
     };
   }
-  const updateData = { ...req.body };
+
   // const updateData = pick(req.body, ['personal_info.firstName', 'personal_info.lastName', 'personal_info.age', 'photo']);
-  const profile = await factoryService.updateDoc(Profile, req.params.profileId, updateData);
+  const profile = await factoryService.updateDoc(Profile, req.params.profileId, req.body);
   res.status(httpStatus.OK).json({ status: 'success', data: profile });
 });
 
