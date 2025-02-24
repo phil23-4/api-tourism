@@ -11,16 +11,24 @@ const { Profile } = require('../models');
  * @param   { Object } body - Body object data
  * @returns { Promise<profile> }
  */
-const createProfile = async (user, profileBody) => {
-  const checkUser = await Profile.find({ user });
+// const createProfile = async (user, profileBody) => {
+//   const checkUser = await Profile.find({ user });
 
+//   // 1) Check if the user has already created a profile
+//   if (checkUser.length !== 0)
+//     throw new ApiError(httpStatus.FORBIDDEN, `You've already created your profile! Use update instead.`);
+//   // 2) Create Profile
+//   const doc = await Profile.create(profileBody);
+//   return doc;
+// };
+const createProfile = async (docBody) => {
+  const checkUser = await Profile.find({ user: docBody.user });
   // 1) Check if the user has already created a profile
   if (checkUser.length !== 0)
-    throw new ApiError(httpStatus.FORBIDDEN, `You've already created your profile! Use update instead.`);
-  // 2) Create Profile
-  return Profile.create({ user, profileBody });
+    throw new ApiError(httpStatus.FORBIDDEN, `You've already created your Profile! Use update instead.`);
+  const doc = await Profile.create(docBody);
+  return doc;
 };
-
 /**
  * Update Profile by id
  * @param {ObjectId} profileId
