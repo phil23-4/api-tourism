@@ -38,7 +38,7 @@ const attractionSchema = Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'Destination',
     },
-    attractionLocation: {
+    location: {
       // GeoJSON
       type: {
         type: String,
@@ -99,7 +99,7 @@ attractionSchema.plugin(paginate);
 
 attractionSchema.index({ attractionName: 1, destination: 1, review: 1 }, { unique: true });
 attractionSchema.index({ slug: 1 });
-attractionSchema.index({ attractionLocation: '2dsphere' });
+attractionSchema.index({ location: '2dsphere' });
 
 // Virtual populate
 attractionSchema.virtual('reviews', {

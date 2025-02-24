@@ -24,7 +24,7 @@ const destinationSchema = Schema(
     },
     description: String,
     keywords: [String],
-    destinationLocation: {
+    location: {
       // GeoJSON
       type: {
         type: String,
@@ -47,7 +47,7 @@ destinationSchema.plugin(toJSON);
 destinationSchema.plugin(paginate);
 
 destinationSchema.index({ slug: 1 });
-destinationSchema.index({ destinationLocation: '2dsphere' });
+destinationSchema.index({ location: '2dsphere' });
 
 // Virtual populate
 destinationSchema.virtual('includesAttraction', {
