@@ -25,9 +25,16 @@ const createProfile = {
         x: Joi.string(),
         linkedin: Joi.string(),
       },
-      emergency_contact: [{ name: Joi.string(), relationship: Joi.string(), phone: Joi.string() }],
     },
-    account_status: Joi.string().valid('active', 'disabled'),
+    emergency_contacts: Joi.array().items(
+      Joi.object({
+        name: Joi.string(),
+        relationship: Joi.string(),
+        phone: Joi.string(),
+        notes: Joi.string().allow(''),
+      })
+    ),
+    profile_status: Joi.string().valid('true', 'false'),
     user: Joi.string().custom(objectId),
   }),
 };
@@ -63,7 +70,14 @@ const updateProfile = {
         x: Joi.string(),
         linkedin: Joi.string(),
       },
-      emergency_contact: [{ name: Joi.string(), relationship: Joi.string(), phone: Joi.string() }],
+      emergency_contacts: Joi.array().items(
+        Joi.object({
+          name: Joi.string(),
+          relationship: Joi.string(),
+          phone: Joi.string(),
+          notes: Joi.string().allow(''),
+        })
+      ),
     },
   }),
 };
