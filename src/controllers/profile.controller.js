@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { Profile } = require('../models');
+const { User, Profile } = require('../models');
 const { factoryService } = require('../services');
 
 /**
@@ -20,10 +20,12 @@ const createProfile = catchAsync(async (req, res) => {
     };
   }
   const user = req.user.id;
-  const checkUser = await Profile.find({ user });
+  const checkUserProfile = await factoryService.getOne(Profile, { user });
   // 1) Check if the user has already created a profile
-  if (checkUser.length !== 0) throw new ApiError(httpStatus.FORBIDDEN, `Profile already exists! Use update instead.`);
+  if (checkUserProfile.length !== 0) throw new ApiError(httpStatus.FORBIDDEN, `Profile already exists! Use update instead.`);
   const newProfile = await factoryService.createOne(Profile, req.body);
+  // Link profile to user
+  await factoryService.updateDocById(User, req.user.id, { profile: newProfile._id });
   res.status(httpStatus.CREATED).json({ status: 'success', newProfile });
 });
 
@@ -50,13 +52,6 @@ const getProfile = catchAsync(async (req, res) => {
  * @property  { Object } req.params.profileId - An object contains logged in user profile
  * @returns   { JSON } - A JSON object representing the status, and user data
  */
-// const updateProfile = catchAsync(async (req, res) => {
-//   if (!req.body.user) req.body.user = req.user.id;
-//   if (req.file) req.body.photo = req.file.filename;
-//   const profile = await factoryService.updateDocById(Profile, req.params.profileId, req.body);
-//   res.status(httpStatus.OK).json({ status: 'success', data: profile });
-// });
-
 const updateProfile = catchAsync(async (req, res) => {
   if (!req.body.user) req.body.user = req.user.id;
   if (req.file) {
@@ -65,9 +60,9 @@ const updateProfile = catchAsync(async (req, res) => {
       publicId: req.file.filename,
     };
   }
+  const updateData = { ...req.body };
   // const updateData = pick(req.body, ['personal_info.firstName', 'personal_info.lastName', 'personal_info.age', 'photo']);
-
-  const profile = await factoryService.updateDocById(Profile, req.params.profileId, req.body);
+  const profile = await factoryService.updateDoc(Profile, req.params.profileId, updateData);
   res.status(httpStatus.OK).json({ status: 'success', data: profile });
 });
 
