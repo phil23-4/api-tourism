@@ -30,10 +30,17 @@ const profileSchema = Schema(
     },
     emergency_contacts: [
       {
-        name: String,
-        relationship: String,
-        phone: String,
+        name: {
+          type: String,
+        },
+        relationship: {
+          type: String,
+        },
+        phone: {
+          type: String,
+        },
         notes: String,
+        _id: false,
       },
     ],
     profile_status: { type: Boolean, default: true, select: false },
