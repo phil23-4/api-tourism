@@ -94,10 +94,10 @@ const deleteUser = catchAsync(async (req, res) => {
 const deleteMyAccount = catchAsync(async (req, res) => {
   // Find user document and deactivate it
   const user = await userService.updateUserById(req.user.id, { active: 'false' });
+  await factoryService.updateDoc(Profile, user.profile, { profile_status: 'false' });
   if (!user.active === true) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Account does not exist');
   }
-  await factoryService.updateDoc(Profile, user.profile, { profile_status: 'false' });
   res.status(httpStatus.NO_CONTENT).send();
 });
 
