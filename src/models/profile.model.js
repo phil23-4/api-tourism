@@ -27,16 +27,17 @@ const profileSchema = Schema(
         x: String,
         linkedin: String,
       },
-      emergency_contact: [
-        {
-          name: String,
-          relationship: String,
-          phone: String,
-        },
-      ],
     },
+    emergency_contacts: [
+      {
+        name: String,
+        relationship: String,
+        phone: String,
+        notes: String,
+      },
+    ],
     profile_status: { type: Boolean, default: true, select: false },
-    user: { type: mongoose.Schema.ObjectId, ref: 'User', required: [true, 'Profile must belong to a user.'] },
+    user: { type: mongoose.Schema.ObjectId, ref: 'User', required: [true, 'Profile must belong to a user.'], unique: true },
   },
   {
     timestamps: true,
@@ -47,13 +48,6 @@ const profileSchema = Schema(
 profileSchema.plugin(toJSON);
 profileSchema.plugin(paginate);
 
-// profileSchema.pre(/^find/, function (next) {
-//   this.populate({
-//     path: 'user',
-//     select: 'username',
-//   });
-//   next();
-// });
 // QUERY MIDDLEWARE:
 profileSchema.pre(/^find/, function (next) {
   //  this points to the current query
