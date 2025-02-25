@@ -167,6 +167,14 @@ const updateAttraction = catchAsync(async (req, res) => {
       publicId: file.filename,
     }));
   }
+  // if (req.files.image) {
+  //   req.body.highlightSpots.forEach((spot, i) => {
+  //     spot.image = req.files.image.map((file) => ({
+  //       url: file[i].path,
+  //       publicId: file[i].filename,
+  //     }));
+  //   });
+  // }
   const attraction = await factoryService.updateDocById(Attraction, req.params.attractionId, req.body);
   if (!attraction) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Attraction not found');
