@@ -24,6 +24,7 @@ const attractionSchema = Schema(
       {
         url: String,
         publicId: String,
+        _id: false,
       },
     ],
     summary: {
@@ -59,13 +60,15 @@ const attractionSchema = Schema(
           enum: ['Point'],
         },
         coordinates: [Number],
-        images: [
+        image: [
           {
             url: String,
             publicId: String,
+            _id: false,
           },
         ],
         description: String,
+        _id: false,
       },
     ],
     isAccessibleForFree: {
