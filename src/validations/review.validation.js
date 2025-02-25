@@ -63,9 +63,9 @@ const getReview = {
       tourId: Joi.string().custom(objectId).optional(),
       attractionId: Joi.string().custom(objectId).optional(),
     })
-    .or('tourId', 'attractionId')
+    .nand('tourId', 'attractionId')
     .messages({
-      'object.or': 'Must specify either tourId or attractionId, or none',
+      'object.nand': 'Must specify either tourId or attractionId, or none',
     }),
 };
 
