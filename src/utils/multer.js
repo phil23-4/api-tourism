@@ -9,7 +9,7 @@ const { storage } = require('../config/cloudinary.config');
 const uploadConfig = {
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB
-    files: 4, // Maximum 4 files (1 main + 3 array images)
+    files: 10, // Maximum 4 files (1 main + 3 array images)
   },
   allowedMimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
 };
