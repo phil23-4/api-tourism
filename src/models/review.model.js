@@ -50,7 +50,7 @@ const reviewSchema = Schema(
 reviewSchema.plugin(toJSON);
 reviewSchema.plugin(paginate);
 
-reviewSchema.index({ tour: 1, attraction: 1, user: 1 }, { unique: true });
+reviewSchema.index({ tour: 1, attraction: 1 }, { unique: true });
 
 reviewSchema.statics.calcAverageRatings = async function (tourId, attractionId) {
   const model = tourId ? Tour : Attraction;
