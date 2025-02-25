@@ -38,6 +38,9 @@ const getProfile = catchAsync(async (req, res) => {
   if (!profile) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Profile not found');
   }
+  if (profile.user.toString() !== req.user.id.toString()) {
+    throw new ApiError(httpStatus.FORBIDDEN, `You are not the profile owner!`);
+  }
   res.status(httpStatus.OK).json({ status: 'success', data: profile });
 });
 
@@ -57,10 +60,14 @@ const updateProfile = catchAsync(async (req, res) => {
       publicId: req.file.filename,
     };
   }
-
+  const profile = await factoryService.getDocById(Profile, req.params.profileId);
+  if (profile.user.toString() !== req.user.id.toString()) {
+    throw new ApiError(httpStatus.FORBIDDEN, `You are not the profile owner!`);
+  }
   // const updateData = pick(req.body, ['personal_info.firstName', 'personal_info.lastName', 'personal_info.age', 'photo']);
-  const profile = await factoryService.updateDoc(Profile, req.params.profileId, req.body);
-  res.status(httpStatus.OK).json({ status: 'success', data: profile });
+
+  const updatedProfile = await factoryService.updateDoc(Profile, req.params.profileId, req.body);
+  res.status(httpStatus.OK).json({ status: 'success', data: updatedProfile });
 });
 
 /**
