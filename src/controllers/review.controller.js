@@ -1,22 +1,9 @@
 const httpStatus = require('http-status');
+const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { Review } = require('../models');
-const { factoryService } = require('../services');
-
-// const setTourAttractionUserIds = (req, res, next) => {
-//   if (!req.body.tour && !req.body.attraction) {
-//     return res.status(httpStatus.BAD_REQUEST).json({
-//       status: 'fail',
-//       message: 'Please specify either a tour or attraction',
-//     });
-//   }
-
-//   if (req.params.tourId) req.body.tour = req.params.tourId;
-//   if (req.params.attractionId) req.body.attraction = req.params.attractionId;
-//   req.body.user = req.user.id;
-//   next();
-// };
+const { factoryService, reviewService } = require('../services');
 
 const createReview = catchAsync(async (req, res) => {
   if (req.params.tourId) req.body.tour = req.params.tourId;
@@ -29,13 +16,41 @@ const createReview = catchAsync(async (req, res) => {
     });
   }
 
-  const user = req.user.id;
-  const checkUser = await Review.find({ user, attraction: req.body.attraction });
-  // 1) Check if the user has already created a review
-  if (checkUser.length !== 0) throw new ApiError(httpStatus.FORBIDDEN, `User review already exists! Use update instead.`);
-  const newReview = await factoryService.createOne(Review, req.body);
-  res.status(httpStatus.CREATED).json({ status: 'success', newReview });
-  //   console.log(req.body);
+  const review = await reviewService.createReview(req.body);
+  res.status(httpStatus.CREATED).json({ status: 'success', review });
 });
 
-module.exports = { createReview };
+/**
+ * Get reviews based on filters and options.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} req.params - URL parameters.
+ * @param {string} [req.params.attractionId] - ID of the attraction to filter reviews.
+ * @param {Object} req.query - Query parameters.
+ * @param {string} [req.query.rating] - Rating to filter reviews.
+ * @param {string} [req.query.user] - User ID to filter reviews.
+ * @param {string} [req.query.sortBy] - Field to sort reviews by.
+ * @param {number} [req.query.limit] - Maximum number of reviews to return.
+ * @param {number} [req.query.page] - Page number for pagination.
+ * @param {Object} res - Express response object.
+ *
+ * @returns {Promise<void>} - Returns a promise that resolves to void.
+ *
+ * @throws {ApiError} - Throws an error if no reviews are found.
+ */
+const getReviews = catchAsync(async (req, res) => {
+  let filter = {};
+  if (req.params.attractionId) {
+    filter = { attraction: req.params.attractionId };
+  } else if (req.params.tourId) {
+    filter = { tour: req.params.tourId };
+  } else {
+    filter = pick(req.query, ['rating', 'user', 'attraction', 'tour']);
+  }
+  const options = pick(req.query, ['sortBy', 'limit', 'page']);
+  const review = await factoryService.queryAll(Review, filter, options);
+  if (!review || review.results.length === 0) throw new ApiError(httpStatus.NOT_FOUND, 'No Reviews Found');
+  res.status(httpStatus.OK).json({ message: 'success', review });
+});
+
+module.exports = { createReview, getReviews };
