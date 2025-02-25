@@ -32,13 +32,12 @@ const createReview = {
 const getReviews = {
   params: Joi.object()
     .keys({
-      tourId: Joi.string().custom(objectId),
-      attractionId: Joi.string().custom(objectId),
+      tourId: Joi.string().custom(objectId).optional(),
+      attractionId: Joi.string().custom(objectId).optional(),
     })
-    .xor('tourId', 'attractionId')
+    .nand('tourId', 'attractionId')
     .messages({
-      'object.xor': 'Must specify either a tour or attraction, not both',
-      'object.missing': 'Must provide either tourId or attractionId',
+      'object.nand': 'You can specify either a tour or attraction, or none',
     }),
   query: Joi.object().keys({
     rating: Joi.alternatives().try(
@@ -49,7 +48,9 @@ const getReviews = {
       })
     ),
     user: Joi.string().custom(objectId),
-    sortBy: Joi.string().valid('rating', 'createdAt', 'popularity'),
+    attraction: Joi.string().custom(objectId),
+    tour: Joi.string().custom(objectId),
+    sortBy: Joi.string().valid('rating', '-rating', 'createdAt', '-createdAt', 'popularity'),
     limit: Joi.number().integer().min(1).max(100),
     page: Joi.number().integer().min(1),
   }),
@@ -59,12 +60,12 @@ const getReview = {
   params: Joi.object()
     .keys({
       reviewId: Joi.string().custom(objectId).required(),
-      tourId: Joi.string().custom(objectId),
-      attractionId: Joi.string().custom(objectId),
+      tourId: Joi.string().custom(objectId).optional(),
+      attractionId: Joi.string().custom(objectId).optional(),
     })
-    .xor('tourId', 'attractionId')
+    .or('tourId', 'attractionId')
     .messages({
-      'object.xor': 'Must specify either tourId or attractionId, not both',
+      'object.or': 'Must specify either tourId or attractionId, or none',
     }),
 };
 
