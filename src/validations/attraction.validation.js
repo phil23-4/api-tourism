@@ -5,7 +5,6 @@ const createAttraction = {
   body: Joi.object().keys({
     attractionName: Joi.string(),
     altName: Joi.string(),
-    // mainImage: Joi.string(),
     mainImage: Joi.object().keys({
       url: Joi.string(),
       publicId: Joi.string(),
@@ -18,11 +17,6 @@ const createAttraction = {
     ),
     summary: Joi.string(),
     description: Joi.string(),
-    tours: Joi.object().keys({
-      name: Joi.string(),
-      images: Joi.array().items(Joi.string()),
-      booking: Joi.string(),
-    }),
     keywords: Joi.array().items(Joi.string()),
     destination: Joi.string().custom(objectId),
     attractionLocation: Joi.object().keys({
@@ -52,7 +46,7 @@ const getAttractions = {
     attractionName: Joi.string(),
     ratingsAverage: Joi.string(),
     slug: Joi.string(),
-    destination: Joi.string(),
+    destination: Joi.string().custom(objectId),
     sortBy: Joi.string(),
     limit: Joi.number().integer(),
     page: Joi.number().integer(),
