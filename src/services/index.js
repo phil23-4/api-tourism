@@ -6,4 +6,5 @@ module.exports.profileService = require('./profile.service');
 module.exports.distanceService = require('./distance.service');
 module.exports.attractionService = require('./attraction.service');
 module.exports.reviewService = require('./review.service');
+module.exports.tourService = require('./tour.service');
 module.exports.factoryService = require('./factory.service');
