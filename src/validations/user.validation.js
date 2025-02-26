@@ -26,6 +26,23 @@ const getUser = {
   }),
 };
 
+const getReviews = {
+  query: Joi.object().keys({
+    rating: Joi.alternatives().try(
+      Joi.number().min(1).max(5),
+      Joi.object({
+        gte: Joi.number().min(1),
+        lte: Joi.number().max(5),
+      })
+    ),
+    user: Joi.string().custom(objectId),
+    attraction: Joi.string().custom(objectId),
+    tour: Joi.string().custom(objectId),
+    sortBy: Joi.string().valid('rating', '-rating', 'createdAt', '-createdAt', 'popularity'),
+    limit: Joi.number().integer().min(1).max(100),
+    page: Joi.number().integer().min(1),
+  }),
+};
 const updateUser = {
   params: Joi.object().keys({
     userId: Joi.required().custom(objectId),
@@ -49,6 +66,7 @@ module.exports = {
   createUser,
   getUsers,
   getUser,
+  getReviews,
   updateUser,
   deleteUser,
 };
