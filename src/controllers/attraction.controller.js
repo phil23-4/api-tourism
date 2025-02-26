@@ -86,8 +86,8 @@ const getAttractions = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['ratingsAverage', 'name']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const attractions = await factoryService.queryAll(Attraction, filter, options);
-  if (attractions.results.length === 0) {
-    return res.status(httpStatus.OK).json({ status: 'success', data: 'Attractions list is empty' });
+  if (!attractions || attractions.results.length === 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'No Attractions Found');
   }
   res.status(httpStatus.OK).json({ status: 'success', attractions });
 });
