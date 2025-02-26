@@ -1,9 +1,19 @@
 const { Attraction } = require('../models');
 
 /**
+ * Retrieves statistics for attractions with an average rating of 4.5 or higher.
  * Create an Aggregation pipeline which calculates attraction statistics
- * @param {Object} Attraction
- * @returns {Promise<Attraction>}
+ *
+ * The statistics include:
+ * - Number of attractions
+ * - Number of tours
+ * - Number of ratings
+ * - Average rating
+ * - Destination name
+ *
+ * The results are sorted by average rating in ascending order.
+ *
+ * @returns {Promise<Array<Object>>} A promise that resolves to an array of objects containing attraction statistics.
  */
 const getAttractionStats = async () => {
   const stats = Attraction.aggregate([
