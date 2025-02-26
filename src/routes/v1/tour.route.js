@@ -34,7 +34,7 @@ router
   .get(validate(tourValidation.getTours), getTours)
   .post(
     auth('manageTours'),
-    validate(tourValidation.createTour),
+    // validate(tourValidation.createTour),
     multipleFiles('tourism/tours', [
       { name: 'mainImage', maxCount: 1 },
       { name: 'images', maxCount: 3 },

@@ -8,7 +8,6 @@ const tourSchema = Schema(
   {
     name: {
       type: String,
-      required: true,
       unique: true,
       trim: true,
       maxlength: [40, 'A tour name must be less than or equal to 40 characters'],
@@ -17,15 +16,12 @@ const tourSchema = Schema(
     slug: String,
     duration: {
       type: Number,
-      required: [true, 'A tour must have a duration'],
     },
     maxGroupSize: {
       type: Number,
-      required: [true, 'A tour must have a group size'],
     },
     difficulty: {
       type: String,
-      required: [true, 'A tour must have a difficulty.'],
       enum: {
         values: ['easy', 'medium', 'difficult'],
         message: '{VALUE} is not supported! Difficulty is either: easy, medium, or hard',
@@ -44,7 +40,6 @@ const tourSchema = Schema(
     },
     price: {
       type: Number,
-      required: [true, 'A tour must have a price'],
     },
     priceDiscount: {
       type: Number,
@@ -59,7 +54,6 @@ const tourSchema = Schema(
     summary: {
       type: String,
       trim: true,
-      required: [true, 'A tour must have a description'],
     },
     description: {
       type: String,
@@ -92,6 +86,7 @@ const tourSchema = Schema(
       address: String,
       description: String,
       day: Number,
+      _id: false,
     },
     locations: [
       {
