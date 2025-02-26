@@ -81,7 +81,7 @@ const tourSchema = Schema(
       default: false,
       select: false,
     },
-    startLocation: {
+    location: {
       // GeoJSON
       type: {
         type: String,
