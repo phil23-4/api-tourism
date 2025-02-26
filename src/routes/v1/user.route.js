@@ -10,6 +10,7 @@ const router = express.Router();
 router.use('/profile', profileRoute);
 router.use('/:profileId/profile', profileRoute);
 router.get('/me', auth('manageUser'), validate(userValidation.getUser), userController.getUser);
+router.get('/me/reviews', auth('manageReviews'), validate(userValidation.getReviews), userController.getReviews);
 
 // Delete LoggedIn User Account Route
 router.post('/deactivate', auth('manageUser'), validate(userValidation.deleteUser), userController.deleteMyAccount);
