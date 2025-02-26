@@ -37,6 +37,8 @@ app.use(mongoSanitize());
 // gzip compression
 app.use(compression());
 
+app.disable('x-powered-by');
+
 // enable cors
 app.use(cors());
 app.options('*', cors());
