@@ -20,7 +20,7 @@ const defaultRoutes = [
     route: userRoute,
   },
   {
-    path: '/profile',
+    path: '/profiles',
     route: profileRoute,
   },
   { path: '/destinations', route: destinationRoute },
@@ -29,7 +29,7 @@ const defaultRoutes = [
     route: attractionRoute,
   },
   {
-    path: '/review',
+    path: '/reviews',
     route: reviewRoute,
   },
 ];
