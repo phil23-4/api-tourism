@@ -3,6 +3,7 @@ const allRoles = {
   admin: [
     'getUsers',
     'manageUser',
+    'createReview',
     'manageUsers',
     'manageDestinations',
     'manageAttractions',
