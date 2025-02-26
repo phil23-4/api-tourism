@@ -41,9 +41,6 @@ const updateReview = async (userId, reviewId, updateBody) => {
   if (!review) throw new ApiError(httpStatus.NOT_FOUND, 'Review does not exist!');
 
   // 2) Check if the one who want to update review is the review creator
-  //   if (review.user[0]._id.toString() !== userId.toString()) {
-  //     throw new ApiError(httpStatus.BAD_REQUEST, `You're not the original reviewer!`);
-  //   }
   if (review.user.toString() !== userId.toString()) {
     throw new ApiError(httpStatus.FORBIDDEN, `You're not the original reviewer`);
   }
