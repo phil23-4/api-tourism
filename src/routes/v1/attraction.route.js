@@ -8,7 +8,7 @@ const { multipleFiles } = require('../../utils/multer');
 
 const router = express.Router();
 
-router.use('/review', reviewRoute);
+router.use('/reviews', reviewRoute);
 router.use('/:attractionId/review', reviewRoute);
 
 const {
