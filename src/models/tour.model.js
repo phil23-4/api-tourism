@@ -91,6 +91,7 @@ const tourSchema = Schema(
       coordinates: [Number],
       address: String,
       description: String,
+      day: Number,
     },
     locations: [
       {
