@@ -8,7 +8,7 @@ const tourSchema = Schema(
   {
     name: {
       type: String,
-      required: [true, 'A tour must have a name'],
+      required: true,
       unique: true,
       trim: true,
       maxlength: [40, 'A tour name must be less than or equal to 40 characters'],
@@ -65,11 +65,11 @@ const tourSchema = Schema(
       type: String,
       trim: true,
     },
-    imageCover: {
-      type: String,
-      required: [true, 'A tour must have a cover image'],
+    mainImage: {
+      url: String,
+      publicId: String,
     },
-    images: [String],
+    images: [{ url: String, publicId: String, _id: false }],
     createdAt: {
       type: Date,
       default: Date.now(),
@@ -103,6 +103,7 @@ const tourSchema = Schema(
         address: String,
         description: String,
         day: Number,
+        _id: false,
       },
     ],
     guides: [
@@ -111,6 +112,7 @@ const tourSchema = Schema(
         ref: 'User',
       },
     ],
+    attraction: { type: mongoose.Schema.ObjectId, ref: 'Attraction' },
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
