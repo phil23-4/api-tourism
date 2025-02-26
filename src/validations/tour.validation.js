@@ -24,7 +24,7 @@ const createTour = {
         publicId: Joi.string(),
       })
     ),
-    startDates: Joi.array().items(Joi.date().format('DD/MM/YYYY')).required(),
+    startDates: Joi.array().items(Joi.date()).required(),
     secretTour: Joi.boolean().optional(),
     location: Joi.object().keys({
       type: Joi.string().required(),
@@ -107,7 +107,7 @@ const updateTour = {
         publicId: Joi.string(),
       })
     ),
-    startDates: Joi.array().items(Joi.date().format('DD/MM/YYYY')),
+    startDates: Joi.array().items(Joi.date()),
     secretTour: Joi.boolean().optional(),
     location: Joi.object().keys({
       type: Joi.string(),

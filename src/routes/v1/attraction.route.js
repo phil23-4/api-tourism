@@ -4,12 +4,15 @@ const validate = require('../../middlewares/validate');
 const { attractionValidation } = require('../../validations');
 const { attractionController } = require('../../controllers');
 const reviewRoute = require('./review.route');
+const tourRoute = require('./tour.route');
 const { multipleFiles } = require('../../utils/multer');
 
 const router = express.Router();
 
 router.use('/reviews', reviewRoute);
 router.use('/:attractionId/review', reviewRoute);
+router.use('/tours', tourRoute);
+router.use('/:attractionId/tours', tourRoute);
 
 const {
   aliasTopAttractions,

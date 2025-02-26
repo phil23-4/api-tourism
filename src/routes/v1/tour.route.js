@@ -8,10 +8,12 @@ const { multipleFiles } = require('../../utils/multer');
 
 const router = express.Router({ mergeParams: true });
 
+router.use('/reviews', reviewRoute);
 router.use('/:tourId/reviews', reviewRoute);
 
 const {
   aliasTopTours,
+  createTour,
   getTours,
   getTour,
   getTourBySlug,
@@ -37,7 +39,7 @@ router
       { name: 'mainImage', maxCount: 1 },
       { name: 'images', maxCount: 3 },
     ]),
-    tourController.createTour
+    createTour
   );
 router
   .route('/:tourId')
@@ -56,3 +58,5 @@ router
 router.get('/tour/:slug', validate(tourValidation.getTourBySlug), getTourBySlug);
 router.route('/tours-within/:distance/center/:latLng/unit/:unit').get(getToursWithin);
 router.route('/distances/:latLng/unit/:unit').get(getTourDistances);
+
+module.exports = router;
