@@ -181,7 +181,8 @@ const tourStats = catchAsync(async (req, res) => {
 });
 
 const tourMonthlyPlan = catchAsync(async (req, res) => {
-  const plan = await tourService.getMonthlyPlan();
+  const year = req.params.year * 1;
+  const plan = await tourService.getMonthlyPlan(year);
   res.status(httpStatus.OK).json({ plan });
 });
 
