@@ -9,7 +9,6 @@ const attractionSchema = Schema(
     attractionName: {
       type: String,
       unique: true,
-      required: true,
     },
     altName: {
       type: String,

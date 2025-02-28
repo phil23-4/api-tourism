@@ -123,7 +123,10 @@ const getAttraction = catchAsync(async (req, res) => {
  * @returns   { JSON } - A JSON object representing the status, and Attraction
  */
 const getAttractionBySlug = catchAsync(async (req, res) => {
-  const attraction = await factoryService.getDocBySlug(Attraction, req.params.slug);
+  const attraction = await factoryService.getDocBySlug(Attraction, req.params.slug, [
+    { path: 'reviews' },
+    { path: 'tours', select: 'name imageCover' },
+  ]);
   if (!attraction) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Attraction not found');
   }
@@ -175,7 +178,7 @@ const updateAttraction = catchAsync(async (req, res) => {
   //     }));
   //   });
   // }
-  const attraction = await factoryService.updateDocById(Attraction, req.params.attractionId, req.body);
+  const attraction = await factoryService.updateDoc(Attraction, req.params.attractionId, req.body);
   if (!attraction) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Attraction not found');
   }

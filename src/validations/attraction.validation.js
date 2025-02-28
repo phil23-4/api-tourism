@@ -3,7 +3,7 @@ const { objectId } = require('./custom.validation');
 
 const createAttraction = {
   body: Joi.object().keys({
-    attractionName: Joi.string(),
+    attractionName: Joi.string().required(),
     altName: Joi.string(),
     mainImage: Joi.object().keys({
       url: Joi.string(),
