@@ -83,7 +83,7 @@ const getAttractions = catchAsync(async (req, res) => {
   // To Allow for nested GET reviews on attraction (Hack)
   // let filter = {};
   // if (req.params.attractionId) filter = pick(req.query, ['name', 'ratingsAverage'], { attraction: req.params.attractionId });
-  const filter = pick(req.query, ['ratingsAverage', 'name']);
+  const filter = pick(req.query, ['ratingsAverage', 'attractionName', 'slug', 'category']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const attractions = await factoryService.queryAll(Attraction, filter, options);
   if (!attractions || attractions.results.length === 0) {

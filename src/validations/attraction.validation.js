@@ -45,6 +45,7 @@ const getAttractions = {
   query: Joi.object().keys({
     attractionName: Joi.string(),
     ratingsAverage: Joi.string(),
+    category: Joi.string(),
     slug: Joi.string(),
     destination: Joi.string().custom(objectId),
     sortBy: Joi.string(),
