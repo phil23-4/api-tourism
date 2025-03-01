@@ -111,7 +111,7 @@ userSchema.pre(/^find/, function (next) {
 });
 
 userSchema.pre(/^find/, function (next) {
-  this.populate({ path: 'profile', select: 'personal_info.firstName photo.url' });
+  this.populate({ path: 'profile', select: 'personal_info.firstName personal_info.lastName photo.url' });
   next();
 });
 // // Check if user changed password after the token was issued
