@@ -13,7 +13,6 @@ const { authLimiter, uploadLimiter } = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
-const logger = require('./config/logger');
 
 const app = express();
 
@@ -71,9 +70,5 @@ app.use(errorConverter);
 
 // handle error
 app.use(errorHandler);
-
-app.get('/', (req, res) => res.send('Express on Vercel'));
-
-app.listen(3000, () => logger.info('Server ready on port 3000.'));
 
 module.exports = app;
