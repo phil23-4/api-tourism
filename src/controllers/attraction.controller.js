@@ -107,7 +107,11 @@ const getAttractions = catchAsync(async (req, res) => {
 const getAttraction = catchAsync(async (req, res) => {
   const attraction = await factoryService.getDocById(Attraction, req.params.attractionId, [
     { path: 'reviews' },
-    { path: 'tours', select: 'name imageCover' },
+    {
+      path: 'tours',
+      select:
+        'name slug duration maxGroupSize difficulty price summary description mainImage images startDates location locations guides',
+    },
   ]);
   if (!attraction) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Attraction not found');
@@ -125,7 +129,11 @@ const getAttraction = catchAsync(async (req, res) => {
 const getAttractionBySlug = catchAsync(async (req, res) => {
   const attraction = await factoryService.getDocBySlug(Attraction, req.params.slug, [
     { path: 'reviews' },
-    { path: 'tours', select: 'name imageCover' },
+    {
+      path: 'tours',
+      select:
+        'name slug duration maxGroupSize difficulty price ratingsAverage summary description mainImage images startDates location locations guides',
+    },
   ]);
   if (!attraction) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Attraction not found');
@@ -247,6 +255,26 @@ const attractionStats = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).json({ stats });
 });
 
+/**
+ * Get all unique attraction categories.
+ *
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>} - Returns a promise that resolves to void
+ */
+const getAttractionCategories = catchAsync(async (req, res) => {
+  const categories = await Attraction.distinct('category');
+  if (!categories || categories.length === 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'No categories found');
+  }
+
+  res.status(httpStatus.OK).json({
+    status: 'success',
+    results: categories.length,
+    categories,
+  });
+});
+
 module.exports = {
   aliasTopAttractions,
   createAttraction,
@@ -258,4 +286,5 @@ module.exports = {
   getAttractionsWithin,
   getAttractionDistances,
   attractionStats,
+  getAttractionCategories,
 };
