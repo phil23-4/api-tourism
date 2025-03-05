@@ -120,7 +120,7 @@ const getTours = catchAsync(async (req, res) => {
 const getTour = catchAsync(async (req, res) => {
   const tour = await factoryService.getDocById(Tour, req.params.tourId, [
     { path: 'reviews' },
-    { path: 'tours', select: 'name imageCover' },
+    // { path: 'tours', select: 'name imageCover' },
   ]);
   if (!tour) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Tour not found');
@@ -129,7 +129,7 @@ const getTour = catchAsync(async (req, res) => {
 });
 
 const getTourBySlug = catchAsync(async (req, res) => {
-  const tour = await factoryService.getDocBySlug(Tour, req.params.slug);
+  const tour = await factoryService.getDocBySlug(Tour, req.params.slug, { path: 'reviews' });
   if (!tour) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Tour not found');
   }

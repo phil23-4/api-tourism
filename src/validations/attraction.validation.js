@@ -3,7 +3,7 @@ const { objectId } = require('./custom.validation');
 
 const createAttraction = {
   body: Joi.object().keys({
-    attractionName: Joi.string().required(),
+    attractionName: Joi.string(),
     altName: Joi.string(),
     mainImage: Joi.object().keys({
       url: Joi.string(),
@@ -20,7 +20,7 @@ const createAttraction = {
     keywords: Joi.array().items(Joi.string()),
     destination: Joi.string().custom(objectId),
     attractionLocation: Joi.object().keys({
-      type: Joi.string().required(),
+      type: Joi.string(),
       coordinates: Joi.array().items(Joi.number().precision(8)),
       name: Joi.string(),
       address: Joi.string(),
