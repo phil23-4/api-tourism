@@ -1,5 +1,4 @@
 const sharp = require('sharp');
-const logger = require('../config/logger');
 const catchAsync = require('./catchAsync');
 
 exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
@@ -59,7 +58,6 @@ exports.resizeTourImages = catchAsync(async (req, res, next) => {
   await Promise.all(
     req.files.images.map(async (file, i) => {
       const filename = `tour-${req.params.tourId}-${Date.now()}-${i + 1}.webp`;
-      logger.info(filename);
 
       await sharp(file.buffer)
         .resize(2000, 1333)
@@ -111,7 +109,6 @@ exports.resizeAttractionImages = catchAsync(async (req, res, next) => {
   await Promise.all(
     req.files.images.map(async (file, i) => {
       const filename = `attraction-${req.params.attractionId}-${Date.now()}-${i + 1}.webp`;
-      logger.info(filename);
 
       await sharp(file.buffer)
         .resize(2000, 1333)
