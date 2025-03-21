@@ -15,3 +15,5 @@ coverage
 src/public/assets/*
 src/update.code.js
 src/utils/cloudinary.js
+
+.vercel
