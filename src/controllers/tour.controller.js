@@ -101,13 +101,14 @@ const getTours = catchAsync(async (req, res) => {
     filter = { attraction: req.params.attractionId };
   } else {
     filter = pick(req.query, [
-      'rating',
+      'category',
       'ratingsAverage',
       'attraction',
       'difficulty',
       'duration',
       'maxGroupSize',
       'price',
+      'priceDiscount',
       'name',
     ]);
   }

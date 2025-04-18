@@ -14,6 +14,7 @@ const tourSchema = Schema(
       minlength: [10, 'A tour name must not be less than 10 characters'],
     },
     slug: String,
+    category: String,
     duration: {
       type: Number,
     },
