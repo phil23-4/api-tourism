@@ -44,7 +44,7 @@ module.exports = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   mongoose: {
-    url: envVars.MONGODB_ATLAS_URL,
+    url: envVars.MONGODB_URL,
   },
   jwt: {
     secret: envVars.JWT_SECRET,
