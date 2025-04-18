@@ -7,6 +7,7 @@ const createTour = {
   }),
   body: Joi.object().keys({
     name: Joi.string().required(),
+    category: Joi.string(),
     duration: Joi.number().required(),
     maxGroupSize: Joi.number().required(),
     difficulty: Joi.string().required().valid('easy', 'medium', 'difficult'),
@@ -49,8 +50,13 @@ const createTour = {
 const getTours = {
   query: Joi.object().keys({
     name: Joi.string(),
-    ratingsAverage: Joi.string(),
-    rating: Joi.alternatives().try(
+    category: Joi.string(),
+    difficulty: Joi.string().valid('easy', 'medium', 'difficult'),
+    duration: Joi.number(),
+    maxGroupSize: Joi.number(),
+    price: Joi.number(),
+    priceDiscount: Joi.number(),
+    ratingsAverage: Joi.alternatives().try(
       Joi.number().min(1).max(5),
       Joi.object({
         gte: Joi.number().min(1),
@@ -60,14 +66,15 @@ const getTours = {
     slug: Joi.string(),
     attraction: Joi.string().custom(objectId),
     sortBy: Joi.string().valid(
-      'rating',
       'ratingsAverage',
       'attraction',
       'difficulty',
       'duration',
       'maxGroupSize',
       'price',
-      'name'
+      'priceDiscount',
+      'name',
+      'category'
     ),
     limit: Joi.number().integer().min(1).max(100),
     page: Joi.number().integer().min(1),
@@ -89,14 +96,15 @@ const updateTour = {
     tourId: Joi.required().custom(objectId),
   }),
   body: Joi.object().keys({
-    name: Joi.string().required(),
-    duration: Joi.number().required(),
-    maxGroupSize: Joi.number().required(),
-    difficulty: Joi.string().valid('easy', 'medium', 'difficult').required(),
-    price: Joi.number().required(),
+    name: Joi.string(),
+    duration: Joi.number(),
+    maxGroupSize: Joi.number(),
+    difficulty: Joi.string().valid('easy', 'medium', 'difficult'),
+    price: Joi.number(),
     priceDiscount: Joi.number(),
-    summary: Joi.string().required(),
-    description: Joi.string().required(),
+    category: Joi.string(),
+    summary: Joi.string(),
+    description: Joi.string(),
     mainImage: Joi.object().keys({
       url: Joi.string(),
       publicId: Joi.string(),
